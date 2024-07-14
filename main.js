@@ -1,0 +1,116 @@
+import { createApp } from "./vue.esm-browser.js";
+
+const app_config = {
+	data() {
+		return {
+			searchfield: "",
+			countries: countries_list,
+			selected_country: null,
+			pairs: [
+				{ from: 18, to: 29 },
+				{ from: 30, to: 40 },
+				{ from: 41, to: 55 }
+			],
+			age_template: 2,
+			age_templates: [
+				"18-29, 30-40, 41-55",
+				"18-29, 30-39, 40-49, 50-60",
+				"Custom"
+			],
+			gender: ["M", "F"],
+			sample_size: 1000,
+			results_show: false,
+			is_error: false,
+			result: null
+		};
+	},
+	computed: {
+		filtered_countries() {
+			if (this.searchfield.length == 0) return [];
+			let list = this.countries.filter(country => country.toLowerCase().includes(this.searchfield.toLowerCase()));
+			if (list.length > 10) {
+				list[9] = "...";
+				list.length = 10;
+			}
+			return list;
+		}
+	},
+	methods: {
+		change_country() {
+			this.selected_country = null;
+		},
+		select_country(country) {
+			if (country == "...") return;
+			this.selected_country = country;
+			this.searchfield = "";
+		},
+		remove_pair: function(i) {
+			this.pairs.splice(i, 1);
+		},
+		add_age: function() {
+			this.pairs.push({ from: this.pairs.at(-1).to + 1, to: this.pairs.at(-1).to + 10 });
+		},
+		calc_button: function() {
+			this.results_show = true;
+			this.is_error = this.selected_country === null;
+			if (this.is_error) return;
+
+			let params = {};
+			params.country = this.selected_country;
+			params.gender = this.gender;
+			params.age = this.pairs;
+			params.sample_size = this.sample_size;
+
+			const res = sample_calc(params);
+
+			this.result = res;
+		},
+		copy_to_clipboard: function() {
+			let text = ["Country", this.result.params.country].join("\t");
+
+			const tables = document.querySelectorAll(".res_table");
+
+			for (const table of tables) {
+				text += "\n\n";
+
+				for (let row of table.rows) {
+					let rowData = [];
+
+					for (let cell of row.cells) {
+						rowData.push(cell.innerText);
+					}
+
+					text += rowData.join("\t") + "\n";
+				}
+			}
+
+			navigator.clipboard.writeText(text);
+		}
+	},
+	watch: {
+		age_template: function(i) {
+			if (i == 0) this.pairs = [
+				{ from: 18, to: 29 },
+				{ from: 30, to: 40 },
+				{ from: 41, to: 55 }
+			];
+
+			if (i == 1) this.pairs = [
+				{ from: 18, to: 29 },
+				{ from: 30, to: 39 },
+				{ from: 40, to: 49 },
+				{ from: 50, to: 60 }
+			];
+		},
+		gender: function(value, prev_value) {
+			if (value.length == 0) this.gender = [prev_value == "M" ? "F" : "M"];
+			prev_value = this.gender[0];
+		}
+	}
+};
+
+createApp(app_config).mount('#app');
+
+document.addEventListener("wheel", function(event) {
+	if (event.target.type == "number") event.target.focus();
+});

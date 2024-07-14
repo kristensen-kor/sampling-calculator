@@ -1,0 +1,168 @@
+html {
+	font-family: sans-serif;
+	background-color: #f4f2f1;
+
+	& body {
+		margin: 0;
+		padding: 2rem;
+	}
+}
+
+header {
+	margin-bottom: 1rem;
+
+	& h1 {
+		margin: 0;
+		display: flex;
+
+		& a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		& .home-link {
+			margin-right: 0.5rem;
+		}
+
+		& .home-link:hover {
+			color: #268bd2;
+		}
+	}
+}
+
+#app {
+	max-width: max-content;
+	gap: 1rem;
+
+	& input[type="number"] {
+		width: 4ch;
+	}
+
+	& textarea {
+		grid-column: span 2;
+		padding: 0.5rem;
+		border: 1px solid #c7c0b7;
+		border-radius: 4px;
+		font-size: 1rem;
+		background-color: #f6f4f3;
+		outline-color: #695e52;
+	}
+
+	& textarea:hover {
+		border-color: #9d8e7f;
+	}
+
+	& span {
+		justify-self: end;
+	}
+}
+
+.block {
+	border: 1px solid grey;
+	padding: 4px;
+	border-radius: 8px;
+	background-color: #f2f0ee;
+	margin-bottom: 10px;
+}
+
+.interval-block {
+	position: relative;
+	border-radius: 4px;
+	margin-bottom: 2px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.interval-block button { position: absolute; top: -2px; right: 90px;
+ background: transparent; border: none; color: grey; font-size: 14px; }
+
+.interval-block button:hover {
+	color: red;
+}
+
+.interval-block input {
+	width: 70px;
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.add-button {
+	display: block;
+	text-align: center;
+}
+
+.caption {
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+
+.calc_button {
+	width: 100%;
+}
+
+h2 {
+	margin-top: 4px;
+	margin-bottom: 8px;
+}
+
+.subwindow {
+	display: inline-block;
+	float: left;
+	/* max-width: calc(100% - 4px); */
+	/* float: left; */
+	/* display: block; */
+	/* width: calc(50% - 4px); */
+	/* box-sizing: border-box; */
+	/* margin: 0; */
+	/* padding: 0; */
+	/* border: 1px solid red; */
+/*	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+/*	background-color: var(--bg_100);*/
+/*	border-radius: 8px;*/
+/*	padding: 0.5rem;*/
+/*	margin-right: 1rem;*/
+/*	margin-bottom: 1rem;*/
+	margin-right: 40px;
+}
+
+
+.country_list {
+	cursor: default;
+}
+
+.country_list:hover {
+	color: grey;
+}
+
+.selected_country {
+	position: relative;
+	cursor: default;
+}
+
+.selected_country:hover {
+	color: red;
+	text-decoration: line-through;
+}
+
+.remove_mark {
+	visibility: hidden;
+	color: red;
+	position: absolute;
+	right: 0;
+}
+
+.selected_country:hover .remove_mark {
+	visibility: visible;
+}
+
+.res_table {
+	border-collapse: collapse;
+}
+
+.res_table td {
+	padding: 2px 4px;
+	text-align: right;
+	border: 1px solid grey;
+}
