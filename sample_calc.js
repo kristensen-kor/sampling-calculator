@@ -40,17 +40,7 @@ function quotas_sort(xs) {
 	return Object.keys(ys).map(Number).toSorted((a, b) => a - b).map(a => ys[a]);
 }
 
-function sample_calc(params) {
-	const age_from = params.age.at(0).from;
-	const age_to = params.age.at(-1).to;
-
-	let local_db = convertToArrayOfObjects(population_data_raw);
-
-	local_db = local_db.filter(x => x.country == params.country);
-	local_db = local_db.filter(x => params.gender.includes(x.gender));
-
-	local_db = local_db.filter(x => x.age >= age_from && x.age <= age_to);
-
+function calc_country(country, params, local_db) {
 	const gp_sum = sum(local_db.map(x => x.cnt));
 
 	let temp_quota_db = {};
@@ -89,6 +79,7 @@ function sample_calc(params) {
 	}
 
 	let res = {};
+	res.country = country;
 	res.params = params;
 	res.data = local_quota_db;
 	res.gp_sum = gp_sum;
@@ -120,6 +111,29 @@ function sample_calc(params) {
 	res.data_age = Object.values(data_age);
 	res.data_gender = Object.values(data_gender);
 
+
+	return res;
+}
+
+function sample_calc(params) {
+	const age_from = params.age.at(0).from;
+	const age_to = params.age.at(-1).to;
+
+	let local_db = convertToArrayOfObjects(population_data_raw);
+
+	local_db = local_db.filter(x => params.countries.includes(x.country));
+	local_db = local_db.filter(x => params.gender.includes(x.gender));
+	local_db = local_db.filter(x => x.age >= age_from && x.age <= age_to);
+
+	country_res = {};
+
+	for (country of params.countries) {
+		country_res[country] = calc_country(country, params, local_db.filter(x => x.country == country))
+	}
+
+	let res = {};
+	res.params = params;
+	res.countries_data = country_res;
 
 	return res;
 }

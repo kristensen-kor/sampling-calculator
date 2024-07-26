@@ -5,7 +5,8 @@ const app_config = {
 		return {
 			searchfield: "",
 			countries: countries_list,
-			selected_country: null,
+			selected_countries: [],
+			empty_country_warning: "",
 			pairs: [
 				{ from: 18, to: 29 },
 				{ from: 30, to: 40 },
@@ -26,22 +27,27 @@ const app_config = {
 	},
 	computed: {
 		filtered_countries() {
+			this.empty_country_warning = "";
 			if (this.searchfield.length == 0) return [];
-			let list = this.countries.filter(country => country.toLowerCase().includes(this.searchfield.toLowerCase()));
+			const text = this.searchfield.toLowerCase();
+			const res1 = this.countries.filter(country => country.toLowerCase().startsWith(text));
+			const res2 = this.countries.filter(country => country.toLowerCase().includes(text) && !country.toLowerCase().startsWith(text));
+			let list = [...res1, ...res2];
 			if (list.length > 10) {
 				list[9] = "...";
 				list.length = 10;
 			}
 			return list;
-		}
+		},
+
 	},
 	methods: {
-		change_country() {
-			this.selected_country = null;
+		remove_country(i) {
+			this.selected_countries.splice(i, 1);
 		},
 		select_country(country) {
 			if (country == "...") return;
-			this.selected_country = country;
+			this.selected_countries.push(country);
 			this.searchfield = "";
 		},
 		remove_pair: function(i) {
@@ -51,14 +57,16 @@ const app_config = {
 			this.pairs.push({ from: this.pairs.at(-1).to + 1, to: this.pairs.at(-1).to + 10 });
 		},
 		calc_button: function() {
-			this.results_show = true;
-			this.is_error = this.selected_country === null;
+			this.is_error = this.selected_countries.length == 0;
+			if (this.is_error) this.empty_country_warning = "red_warning";
 			if (this.is_error) return;
 
+			this.results_show = true;
+
 			let params = {};
-			params.country = this.selected_country;
-			params.gender = this.gender;
-			params.age = this.pairs;
+			params.countries = this.selected_countries.slice();
+			params.gender = this.gender.slice();
+			params.age = this.pairs.slice();
 			params.sample_size = this.sample_size;
 
 			const res = sample_calc(params);

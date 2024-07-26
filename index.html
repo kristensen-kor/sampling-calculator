@@ -11,19 +11,28 @@
 <body>
 	<header>
 		<h1>
+			<a href="/">▢</a>
 			<a href="">Sampling calculator</a>
 		</h1>
 	</header>
 
 	<div id="app">
+
 		<div class="subwindow">
 			<h2>Options</h2>
-			<div class="block">
+			<div class="block country_block">
 				<div class="caption">Country</div>
-				<div class="selected_country" @click="change_country">{{ selected_country }}<span class="remove_mark">✕</span></div>
-				<input type="text" v-if="selected_country === null" placeholder="Search country..." v-model="searchfield">
-				<div class="country_list" v-for="country in filtered_countries" @click="select_country(country)">
-					{{ country }}
+
+				<div class="selected_country" v-for="(country, i) in selected_countries" @click="remove_country(i)">
+					<span>{{ country }}</span>
+					<span class="remove_mark">✕</span>
+				</div>
+
+				<input type="text" :class="empty_country_warning" :placeholder="selected_countries.length == 0 ? 'Search country...' : 'Add country...'" v-model="searchfield">
+				<div class="search_area" v-show="searchfield.length > 0" :class="empty_country_warning">
+					<div class="country_list" v-for="country in filtered_countries" @click="select_country(country)">
+						{{ country }}
+					</div>
 				</div>
 			</div>
 			<div class="block">
@@ -35,12 +44,12 @@
 			<div class="block">
 				<div class="caption">Age</div>
 				<div class="interval-block" v-for="(pair, i) of pairs">
-					<input type="number" v-model.number="pairs[i].from">
-					-
-					<input type="number" v-model.number="pairs[i].to">
+					<input type="number" v-model.number="pairs[i].from" min="0">
+					<span>-</span>
+					<input type="number" v-model.number="pairs[i].to" max="100" :style="pairs[i].to == 100 ? { width: 6 + 'ch' } : {}">
 					<button @click="remove_pair(i)">✕</button>
 				</div>
-				<button class="add-button" @click="add_age" style="width: 100px;">+</button>
+				<button class="add-button" @click="add_age" style="width: 103px;">+</button>
 				<div style="margin-top: 10px;">Templates:</div>
 				<label v-for="(x, i) of age_templates" style="display: block;"><input type="radio" name="age_template_group" :value="i" v-model="age_template">{{ x }}</label>
 			</div>
@@ -50,82 +59,87 @@
 			</div>
 			<button class="calc_button" @click="calc_button">Calculate</button>
 		</div>
+
 		<div class="subwindow" v-if="results_show">
 			<h2>Results</h2>
-			<div v-show="is_error"><br>⟵ try selecting country here first</div>
 
-			<div v-if="result !== null">
-				<h3>{{ result.params.country }}</h3>
-				<br>
-				<table class="res_table">
-					<tr>
-						<th>Quota</th>
-						<th>GP</th>
-						<th>%</th>
-						<th>Sample</th>
-					</tr>
-					<tr v-for="row of result.data">
-						<td>{{ row.quota }}</td>
-						<td>{{ row.gp }}</td>
-						<td>{{ row.frac_display }}</td>
-						<td>{{ row.sample }}</td>
-					</tr>
-					<tr>
-						<td>Total</td>
-						<td>{{ result.gp_sum }}</td>
-						<td>100%</td>
-						<td>{{ result.params.sample_size }}</td>
-					</tr>
-				</table>
+			<div class="result_container" v-if="result !== null">
+				<div class="result_countries" v-for="country in result.params.countries">
 
-				<br>
-				<table class="res_table">
-					<tr>
-						<th>Quota</th>
-						<th>GP</th>
-						<th>%</th>
-						<th>Sample</th>
-					</tr>
-					<tr v-for="row of result.data_age">
-						<td>{{ row.quota }}</td>
-						<td>{{ row.gp }}</td>
-						<td>{{ row.frac_display }}</td>
-						<td>{{ row.sample }}</td>
-					</tr>
-					<tr>
-						<td>Total</td>
-						<td>{{ result.gp_sum }}</td>
-						<td>100%</td>
-						<td>{{ result.params.sample_size }}</td>
-					</tr>
-				</table>
+					<h3>{{ country }}</h3>
+					<br>
+					<table class="res_table">
+						<tr>
+							<th>Quota</th>
+							<th>GP</th>
+							<th>%</th>
+							<th>Sample</th>
+						</tr>
+						<tr v-for="row of result.countries_data[country].data">
+							<td>{{ row.quota }}</td>
+							<td>{{ row.gp }}</td>
+							<td>{{ row.frac_display }}</td>
+							<td>{{ row.sample }}</td>
+						</tr>
+						<tr>
+							<td>Total</td>
+							<td>{{ result.countries_data[country].gp_sum }}</td>
+							<td>100%</td>
+							<td>{{ result.countries_data[country].params.sample_size }}</td>
+						</tr>
+					</table>
 
-				<br>
-				<table class="res_table">
-					<tr>
-						<th>Quota</th>
-						<th>GP</th>
-						<th>%</th>
-						<th>Sample</th>
-					</tr>
-					<tr v-for="row of result.data_gender">
-						<td>{{ row.quota }}</td>
-						<td>{{ row.gp }}</td>
-						<td>{{ row.frac_display }}</td>
-						<td>{{ row.sample }}</td>
-					</tr>
-					<tr>
-						<td>Total</td>
-						<td>{{ result.gp_sum }}</td>
-						<td>100%</td>
-						<td>{{ result.params.sample_size }}</td>
-					</tr>
-				</table>
+					<br>
+					<table class="res_table">
+						<tr>
+							<th>Quota</th>
+							<th>GP</th>
+							<th>%</th>
+							<th>Sample</th>
+						</tr>
+						<tr v-for="row of result.countries_data[country].data_age">
+							<td>{{ row.quota }}</td>
+							<td>{{ row.gp }}</td>
+							<td>{{ row.frac_display }}</td>
+							<td>{{ row.sample }}</td>
+						</tr>
+						<tr>
+							<td>Total</td>
+							<td>{{ result.countries_data[country].gp_sum }}</td>
+							<td>100%</td>
+							<td>{{ result.countries_data[country].params.sample_size }}</td>
+						</tr>
+					</table>
 
-				<br>
-				<button @click="copy_to_clipboard">Copy to clipboard</button>
+					<br>
+					<table class="res_table">
+						<tr>
+							<th>Quota</th>
+							<th>GP</th>
+							<th>%</th>
+							<th>Sample</th>
+						</tr>
+						<tr v-for="row of result.countries_data[country].data_gender">
+							<td>{{ row.quota }}</td>
+							<td>{{ row.gp }}</td>
+							<td>{{ row.frac_display }}</td>
+							<td>{{ row.sample }}</td>
+						</tr>
+						<tr>
+							<td>Total</td>
+							<td>{{ result.countries_data[country].gp_sum }}</td>
+							<td>100%</td>
+							<td>{{ result.countries_data[country].params.sample_size }}</td>
+						</tr>
+					</table>
+
+					<br>
+					<button @click="copy_to_clipboard">Copy to clipboard</button>
+
+				</div>
 			</div>
 		</div>
+
 	</div>
 </body>
 </html>
