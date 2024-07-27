@@ -24,12 +24,12 @@
 				<div class="caption">Country</div>
 
 				<div class="selected_country" v-for="(country, i) in selected_countries" @click="remove_country(i)">
-					<span>{{ country }}</span>
+					<span class="name">{{ country }}</span>
 					<span class="remove_mark">✕</span>
 				</div>
 
-				<input type="text" :class="empty_country_warning" :placeholder="selected_countries.length == 0 ? 'Search country...' : 'Add country...'" v-model="searchfield">
-				<div class="search_area" v-show="searchfield.length > 0" :class="empty_country_warning">
+				<input type="text" :class="{green_shadow, red_warning}" :placeholder="selected_countries.length == 0 ? 'Search country...' : 'Add country...'" v-model="searchfield">
+				<div class="search_area" v-show="searchfield.length > 0" :class="{red_warning}">
 					<div class="country_list" v-for="country in filtered_countries" @click="select_country(country)">
 						{{ country }}
 					</div>

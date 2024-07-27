@@ -138,7 +138,11 @@ header {
 				border: 1px solid var(--bg_700);
 			}
 
-			& input[type="text"].red_warning, & .search_area.red_warning {
+			& .green_shadow {
+				box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+			}
+
+			& .red_warning {
 				animation-duration: 0.45s;
 				animation-name: red_warning;
 				animation-direction: alternate;
@@ -148,6 +152,7 @@ header {
 
 			& .country_list {
 				cursor: default;
+				padding: 1px 2px;
 			}
 
 			& .country_list:hover {
@@ -156,28 +161,28 @@ header {
 
 			& .selected_country {
 				cursor: default;
+				line-height: 1.2;
 				display: flex;
 				justify-content: space-between;
 
+				& .remove_mark {
+					visibility: hidden;
+				}
+
 				&:hover {
 					color: red;
-					text-decoration: line-through;
+
+					& .name {
+						text-decoration: line-through;
+					}
+
+					& .remove_mark {
+						visibility: visible;
+					}
 				}
-
-				& span {
-					line-height: 1.2;
-				}
-
 			}
 
-			& .remove_mark {
-				visibility: hidden;
-				color: red;
-			}
 
-			& .selected_country:hover .remove_mark {
-				visibility: visible;
-			}
 		}
 
 		& .interval-block {

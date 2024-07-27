@@ -6,6 +6,8 @@ const app_config = {
 			searchfield: "",
 			countries: countries_list,
 			selected_countries: [],
+			green_shadow: true,
+			red_warning: false,
 			empty_country_warning: "",
 			pairs: [
 				{ from: 18, to: 29 },
@@ -27,19 +29,20 @@ const app_config = {
 	},
 	computed: {
 		filtered_countries() {
-			this.empty_country_warning = "";
+			this.red_warning = false;
+			if (this.searchfield.length > 0) this.green_shadow = false;
 			if (this.searchfield.length == 0) return [];
 			const text = this.searchfield.toLowerCase();
 			const res1 = this.countries.filter(country => country.toLowerCase().startsWith(text));
 			const res2 = this.countries.filter(country => country.toLowerCase().includes(text) && !country.toLowerCase().startsWith(text));
 			let list = [...res1, ...res2];
+			list = list.filter(a => !this.selected_countries.includes(a));
 			if (list.length > 10) {
 				list[9] = "...";
 				list.length = 10;
 			}
 			return list;
-		},
-
+		}
 	},
 	methods: {
 		remove_country(i) {
@@ -58,8 +61,11 @@ const app_config = {
 		},
 		calc_button: function() {
 			this.is_error = this.selected_countries.length == 0;
-			if (this.is_error) this.empty_country_warning = "red_warning";
-			if (this.is_error) return;
+			if (this.is_error) {
+				this.green_shadow = false;
+				this.red_warning = true;
+				return;
+			}
 
 			this.results_show = true;
 
