@@ -210,6 +210,14 @@ header {
 				font-weight: 700;
 			}
 		}
+
+		& .red_warning {
+			animation-duration: 0.45s;
+			animation-name: red_warning;
+			animation-direction: alternate;
+			animation-iteration-count: 5;
+			animation-fill-mode: forwards;
+		}
 	}
 
 	& input[type="number"],

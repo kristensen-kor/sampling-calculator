@@ -22,6 +22,7 @@ const app_config = {
 			],
 			gender: ["M", "F"],
 			sample_size: 1000,
+			sample_size_error: false,
 			results_show: false,
 			is_error: false,
 			result: null
@@ -61,11 +62,14 @@ const app_config = {
 		},
 		calc_button: function() {
 			this.is_error = this.selected_countries.length == 0;
+
 			if (this.is_error) {
 				this.green_shadow = false;
 				this.red_warning = true;
 				return;
 			}
+
+			if (this.sample_size < 0) return;
 
 			this.results_show = true;
 
@@ -73,7 +77,7 @@ const app_config = {
 			params.countries = this.selected_countries.slice();
 			params.gender = this.gender.slice();
 			params.age = this.pairs.slice();
-			params.sample_size = this.sample_size;
+			params.sample_size = this.sample_size || 0;
 
 			const res = sample_calc(params);
 
@@ -119,6 +123,9 @@ const app_config = {
 		gender: function(value, prev_value) {
 			if (value.length == 0) this.gender = [prev_value == "M" ? "F" : "M"];
 			prev_value = this.gender[0];
+		},
+		sample_size: function(value) {
+			this.sample_size_error = value < 0;
 		}
 	}
 };

@@ -28,8 +28,8 @@
 					<span class="remove_mark">✕</span>
 				</div>
 
-				<input type="text" :class="{green_shadow, red_warning}" :placeholder="selected_countries.length == 0 ? 'Search country...' : 'Add country...'" v-model="searchfield">
-				<div class="search_area" v-show="searchfield.length > 0" :class="{red_warning}">
+				<input type="text" :class="{ green_shadow, red_warning }" :placeholder="selected_countries.length == 0 ? 'Search country...' : 'Add country...'" v-model="searchfield">
+				<div class="search_area" v-show="searchfield.length > 0" :class="{ red_warning }">
 					<div class="country_list" v-for="country in filtered_countries" @click="select_country(country)">
 						{{ country }}
 					</div>
@@ -55,7 +55,7 @@
 			</div>
 			<div class="block">
 				<div class="caption">Sample size</div>
-				<input type="number" v-model.number="sample_size" style="width: 10ch;">
+				<input type="number" v-model="sample_size" min="0" style="width: 10ch;" :class="{ red_warning: sample_size_error }">
 			</div>
 			<button class="calc_button" @click="calc_button">Calculate</button>
 		</div>
