@@ -30,7 +30,7 @@
 
 				<input type="text" :class="{ green_shadow, red_warning }" :placeholder="selected_countries.length == 0 ? 'Search country...' : 'Add country...'" v-model="searchfield">
 				<div class="search_area" v-show="searchfield.length > 0" :class="{ red_warning }">
-					<div class="country_list" v-for="country in filtered_countries" @click="select_country(country)">
+					<div class="country_list" v-for="country in filtered_countries" @click="select_country(country)" :class="{ disabled: country == '...' || country == 'Nothing found' }">
 						{{ country }}
 					</div>
 				</div>
@@ -43,15 +43,15 @@
 			</div>
 			<div class="block">
 				<div class="caption">Age</div>
-				<div class="interval-block" v-for="(pair, i) of pairs">
-					<input type="number" v-model.number="pairs[i].from" min="0">
+				<div class="interval-block" v-for="(pair, i) of age_pairs">
+					<input type="number" v-model.number="age_pairs[i].from" min="0" max="100" :style="age_pairs[i].from >= 100 ? { width: 6 + 'ch' } : {}" :class="{ red_warning: age_pairs_errors[i].from }">
 					<span>-</span>
-					<input type="number" v-model.number="pairs[i].to" max="100" :style="pairs[i].to == 100 ? { width: 6 + 'ch' } : {}">
-					<button @click="remove_pair(i)">✕</button>
+					<input type="number" v-model.number="age_pairs[i].to" min="0" max="100" :style="age_pairs[i].to >= 100 ? { width: 6 + 'ch' } : {}" :class="{ red_warning: age_pairs_errors[i].to }">
+					<button @click="remove_age_pair(i)" v-show="age_pairs.length > 1">✕</button>
 				</div>
-				<button class="add-button" @click="add_age" style="width: 103px;">+</button>
+				<button class="add-button" @click="add_age" style="width: 103px;" v-show="age_pairs[age_pairs.length - 1].to < 100">+</button>
 				<div style="margin-top: 10px;">Templates:</div>
-				<label v-for="(x, i) of age_templates" style="display: block;"><input type="radio" name="age_template_group" :value="i" v-model="age_template">{{ x }}</label>
+				<label v-for="(x, i) of age_templates_labels" style="display: block;"><input type="radio" name="age_template_group" :value="i" v-model="age_template">{{ x }}</label>
 			</div>
 			<div class="block">
 				<div class="caption">Sample size</div>
