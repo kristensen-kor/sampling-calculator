@@ -89,6 +89,12 @@ header {
 	}
 }
 
+
+.source_link {
+	text-align: right;
+}
+
+
 @keyframes red_warning {
 	from {
 		box-shadow: 0;
